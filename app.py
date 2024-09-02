@@ -7,10 +7,12 @@ from linebot.exceptions import (
     InvalidSignatureError
 )
 from linebot.models import *
+from mongodb_function import *
 from dotenv import load_dotenv
 import os
 import requests
 import json
+
 from linebot import (
     LineBotApi, WebhookHandler
 )
@@ -32,7 +34,8 @@ collection = db['hands']  # 假設你的集合名稱為 hands
 def callback():
     signature = request.headers['X-Line-Signature']
     body = request.get_data(as_text=True)
-
+    write_one_data(eval(body.replace('false','False')))
+    app.logger.info("Request body: " + body)
     try:
         handler.handle(body, signature)
     except InvalidSignatureError:
