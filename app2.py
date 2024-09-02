@@ -1,19 +1,11 @@
+
+
 from flask import Flask, request, abort
-from pymongo import MongoClient
-import os
-from dotenv import load_dotenv
-
-# 加載 .env 文件中的環境變量
-load_dotenv()
-
-# 連接到 MongoDB
-client = MongoClient(os.getenv('MONGODB_URI'))
-db = client['poker_hands']
-collection = db['hands']
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
-from linebot.models import PostbackEvent
+from linebot.models import MessageEvent, TextMessage, TextSendMessage, PostbackEvent
 from dotenv import load_dotenv
+from pymongo import MongoClient
 import os
 
 app = Flask(__name__)
@@ -57,29 +49,29 @@ def callback():
 
     return 'OK'
 
+@handler.add(MessageEvent, message=TextMessage)
+def handle_message(event):
+    user_id = event.source.user_id
+    message_text = event.message.text
+
+    # 將使用者傳送的資料存入 MongoDB
+    poker_hand_data = {
+        "user_id": user_id,
+        "data": message_text
+    }
+    collection.insert_one(poker_hand_data)
+
+    # 回應使用者
+    reply_message = TextSendMessage(text="資料已儲存！")
+    line_bot_api.reply_message(event.reply_token, reply_message)
+
 @handler.add(PostbackEvent)
 def handle_postback(event):
     data = event.postback.data
-    # 假設你從 data 中提取了所需的資料
-    hand_data = {
-        "Level": "5",
-        "玩家人數": "6",
-        "Hero 位置": "BTN",
-        "Hero 後手": "2000",
-        "其他玩家後手": "1500",
-        "Hero 手牌": "As Ks",
-        "翻前Action": "Raise",
-        "Flop Cards": "Ah Kh 2d",
-        "Flop Action": "Check",
-        "Turn Card": "3c",
-        "Turn Action": "Bet",
-        "River Card": "4h",
-        "River Action": "Call"
-    }
-    inserted_id = save_hand_data(hand_data)
-    line_bot_api.reply_message(
-        event.reply_token
-    )
+    if 'action=record_hand' in data:
+        # 處理手牌紀錄的 Postback 事件
+        reply_message = TextSendMessage(text="請填寫以下資料：\nLevel: \n玩家人數: \nHero 位置: \nHero 後手: \n其他玩家後手: \nHero 手牌: \n翻前Action: \nFlop Cards: \nFlop Action: \nTurn Card: \nTurn Action: \nRiver Card: \nRiver Action:")
+        line_bot_api.reply_message(event.reply_token, reply_message)
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
