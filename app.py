@@ -44,27 +44,30 @@ def callback():
     return 'OK'
 
 
+@handler.add(MessageEvent, message=TextMessage)
+def handle_message(event):
+    msg = event.message.text
+    if '手牌紀錄' in msg:  
+        line_bot_api.reply_message(event.reply_token)       
+    elif '@讀取' in msg:
+        datas = read_many_datas()
+        datas_len = len(datas)
+        message = TextSendMessage(text=f'資料數量，一共{datas_len}條')
+        line_bot_api.reply_message(event.reply_token, message)  
+
+    elif '@查詢' in msg:
+        datas = col_find('events')
+        message = TextSendMessage(text=str(datas))
+        line_bot_api.reply_message(event.reply_token, message)
+        
+    else:
+        message = TextSendMessage(text=msg)
+        line_bot_api.reply_message(event.reply_token, message)
+
 @handler.add(PostbackEvent)
-def handle_postback(event):
-    data = event.postback.data
-    if 'action=record_hand' in data:
-        # 紀錄使用者傳送的訊息到 MongoDB
-        user_id = event.source.user_id
-        message = event.postback.fill_in_text
-        
-        record = {
-            "user_id": user_id,
-            "message": message
-        }
-        
-        collection.insert_one(record)
-        
-        reply_message = "已紀錄手牌資料"
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_message))
+def handle_message(event):
+    print(event.postback.data)
 
-
-    
-    
 import os
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
