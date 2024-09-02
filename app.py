@@ -44,7 +44,7 @@ def callback():
 @handler.add(PostbackEvent)
 def handle_postback(event):
     data = event.postback.data
-    if 'action=record_hand2' in data:
+    if 'action=record_hand' in data:
         # 紀錄使用者傳送的訊息到 MongoDB
         user_id = event.source.user_id
         message = event.postback.fill_in_text
