@@ -34,7 +34,7 @@ collection = db['hands']  # 假設你的集合名稱為 hands
 def callback():
     signature = request.headers['X-Line-Signature']
     body = request.get_data(as_text=True)
-    write_one_data(eval(body.replace('false','False')))
+    write_one_data(eval(body))
     app.logger.info("Request body: " + body)
     try:
         handler.handle(body, signature)
