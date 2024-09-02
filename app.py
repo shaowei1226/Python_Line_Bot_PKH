@@ -35,26 +35,23 @@ def callback():
 
     return 'OK'
 
+# 處理 Postback 事件
 @handler.add(PostbackEvent)
 def handle_postback(event):
     data = event.postback.data
     if 'action=record_hand' in data:
+        # 這裡可以解析 data 或者從中提取所需的 ID 等信息
+        # 假設 SQL_ID 是你在 data 中的一部分
+        sql_id = "12345"  # 這裡的 SQL_ID 應該從 data 中提取出來
         
-        reply_message = (
-            "Level: \n"
-            "玩家人數: \n"
-            "Hero 位置: \n"
-            "Hero 後手: \n"
-            "其他玩家後手: \n\n"
-            "Hero 手牌: \n"
-            "翻前Action: \n"
-            "Flop 開的牌: \n"
-            "Flop Action: \n"
-            "Turn 開的牌: \n"
-            "Turn Action: \n"
-            "River 開的牌: \n"
-            "River Action: \n"
-            )     
+        # 準備回覆訊息
+        reply_message = f"紀錄已保存 id={sql_id}"
+
+        # 回覆訊息給使用者
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text=reply_message)
+        )
         
     
     
