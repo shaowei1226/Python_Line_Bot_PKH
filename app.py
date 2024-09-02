@@ -48,14 +48,14 @@ def callback():
 def handle_message(event):
     msg = event.message.text
     if '手牌紀錄' in msg:  
-        line_bot_api.reply_message(event.reply_token)       
-    elif '@讀取' in msg:
+        line_bot_api.reply_message(event.reply_token)  
+    elif '讀取' in msg:
         datas = read_many_datas()
         datas_len = len(datas)
         message = TextSendMessage(text=f'資料數量，一共{datas_len}條')
         line_bot_api.reply_message(event.reply_token, message)  
 
-    elif '@查詢' in msg:
+    elif '查詢' in msg:
         datas = col_find('events')
         message = TextSendMessage(text=str(datas))
         line_bot_api.reply_message(event.reply_token, message)
