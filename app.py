@@ -2,8 +2,8 @@ from pymongo import MongoClient
 import os
 # 替換成你的 MongoDB 連接字串
 client = MongoClient(os.getenv('MONGODB_URI'))
-db = client['line_bot']
-collection = db['messages']
+db = client['poker_hands']
+collection = db['hands']
 
 
 from flask import Flask, request, abort
