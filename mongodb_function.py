@@ -2,7 +2,7 @@ import pymongo
 
 # 要獲得mongodb網址，請至mongodb網站申請帳號進行資料庫建立，網址　https://www.mongodb.com/
 # 獲取的網址方法之範例如圖： https://i.imgur.com/HLCk99r.png
-client = pymongo.MongoClient("mongodb+srv://shaowei:<120129c3>@pj2.zqgckzk.mongodb.net/?retryWrites=true&w=majority&appName=PJ2")
+client = pymongo.MongoClient("mongodb+srv://shaowei:<120129c3>@cluster0.alqkc.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 
 #第一個db的建立
 db = client['poker_hands']
