@@ -1,9 +1,5 @@
 from pymongo import MongoClient
 import os
-# 替換成你的 MongoDB 連接字串
-
-
-
 from flask import Flask, request, abort
 from dotenv import load_dotenv
 from linebot import LineBotApi, WebhookHandler
@@ -17,22 +13,20 @@ load_dotenv()
 client = MongoClient(os.getenv('MONGODB_URI'))
 db = client['poker_hands']
 collection = db['hands']
-# 替換成你的 Line Bot 的 Channel Access Token 和 Channel Secret
+
 line_bot_api = LineBotApi(os.getenv('line_bot_api'))
 handler = WebhookHandler(os.getenv('handler'))
 
-
+print(os.getenv('line_bot_api'))
+print(os.getenv('handler'))
+print(os.getenv('MONGODB_URI'))
 
 @app.route("/callback", methods=['POST'])
 def callback():
-    # 獲取簽名
     signature = request.headers['X-Line-Signature']
-
-    # 獲取請求正文
     body = request.get_data(as_text=True)
     app.logger.info("Request body: " + body)
-
-    # 驗證簽名並處理事件
+    
     try:
         handler.handle(body, signature)
     except InvalidSignatureError:
@@ -42,15 +36,20 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    # 保存用戶的對話內容到 MongoDB
+    print("Received a message")
+    
     user_message = {
         'user_id': event.source.user_id,
         'message': event.message.text,
         'timestamp': event.timestamp
     }
-    collection.insert_one(user_message)
-
-    # 回覆用戶的消息
+    
+    try:
+        collection.insert_one(user_message)
+        print("Message saved to MongoDB")
+    except Exception as e:
+        print(f"Failed to save message to MongoDB: {e}")
+    
     line_bot_api.reply_message(
         event.reply_token,
         TextMessage(text=f"你說了: {event.message.text}")
