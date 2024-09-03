@@ -4,18 +4,23 @@ import os
 client = MongoClient(os.getenv('MONGODB_URI'))
 db = client['poker_hands']
 collection = db['hands']
-
+if client:
+    print ("suruuceey")
 
 from flask import Flask, request, abort
+from dotenv import load_dotenv
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage
 
 app = Flask(__name__)
 
+load_dotenv()
 # 替換成你的 Line Bot 的 Channel Access Token 和 Channel Secret
 line_bot_api = LineBotApi(os.getenv('line_bot_api'))
 handler = WebhookHandler(os.getenv('handler'))
+
+
 
 @app.route("/callback", methods=['POST'])
 def callback():
