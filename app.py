@@ -38,10 +38,8 @@ def callback():
 def handle_message(event):
     print("Received a message")
     
-    user_message = {
-        'user_id': event.source.user_id,
+    user_message = {     
         'message': event.message.text,
-        'timestamp': event.timestamp
     }
     
     try:
