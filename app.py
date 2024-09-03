@@ -1,11 +1,8 @@
 from pymongo import MongoClient
 import os
 # 替換成你的 MongoDB 連接字串
-client = MongoClient(os.getenv('MONGODB_URI'))
-db = client['poker_hands']
-collection = db['hands']
-if client:
-    print ("suruuceey")
+
+
 
 from flask import Flask, request, abort
 from dotenv import load_dotenv
@@ -16,6 +13,10 @@ from linebot.models import MessageEvent, TextMessage
 app = Flask(__name__)
 
 load_dotenv()
+
+client = MongoClient(os.getenv('MONGODB_URI'))
+db = client['poker_hands']
+collection = db['hands']
 # 替換成你的 Line Bot 的 Channel Access Token 和 Channel Secret
 line_bot_api = LineBotApi(os.getenv('line_bot_api'))
 handler = WebhookHandler(os.getenv('handler'))
