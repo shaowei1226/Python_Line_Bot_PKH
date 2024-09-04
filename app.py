@@ -36,18 +36,10 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    print("Received a message")
-    
     user_message = {     
         'message': event.message.text,
     }
-    
-    try:
-        collection.insert_one(user_message)
-        print("Message saved to MongoDB")
-    except Exception as e:
-        print(f"Failed to save message to MongoDB: {e}")
-    
+    collection.insert_one(user_message)
     line_bot_api.reply_message(
         event.reply_token,
         TextMessage(text=f"你說了: {event.message.text}")
