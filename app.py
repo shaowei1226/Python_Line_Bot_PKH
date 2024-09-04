@@ -4,7 +4,7 @@ from flask import Flask, request, abort
 from dotenv import load_dotenv
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
-from linebot.models import MessageEvent, TextMessage
+from linebot.models import MessageEvent, TextMessage, TextSendMessage
 
 app = Flask(__name__)
 
@@ -17,9 +17,6 @@ collection = db['hands']
 line_bot_api = LineBotApi(os.getenv('line_bot_api'))
 handler = WebhookHandler(os.getenv('handler'))
 
-print(os.getenv('line_bot_api'))
-print(os.getenv('handler'))
-print(os.getenv('MONGODB_URI'))
 
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -35,14 +32,11 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    user_message = {     
-        'message': event.message.text,
-    }
-    collection.insert_one(user_message)
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextMessage(text=f"你說了: {event.message.text}")
-    )
+    if event.message.text == "Level":
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text="收到")
+        )
 
 if __name__ == "__main__":
-    app.run(port=8000)
+    app.run()
